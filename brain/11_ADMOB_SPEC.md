@@ -1,37 +1,14 @@
-# AdMob Specification
+# 11_ADMOB_SPEC.md — AdMob Specification
 
-## Goal
+**Authoritative specification:** `18_ADMOB_SPEC.md`
 
-Monetize via Google AdMob display ads without degrading the user experience.
+The canonical SafeRoute AI monetization spec is **`brain/18_ADMOB_SPEC.md`**; this old slot is deprecated.
 
-## Ad Placements
+## Summary
+- Ads are presentation-layer only; never alter routing, imagery, OpenCV, YOLO11, hazards, risk, facilities, or LLM.
+- Banner below route-detail content; low-frequency native; NO interstitial on launch/navigation.
+- Clearly labeled "Ad"; never cover hazards, emergency facilities, or route controls; config-controlled unit IDs; test IDs in dev/staging, real IDs only in release.
+- Ads fail silently (no blank space); never block content.
 
-| Placement | Format | Notes |
-|-----------|--------|-------|
-| Feed footer | Native or banner | No ad between every card; max 1 ad per page of feed |
-| Detail page | Banner | Below content, above footer actions |
-| Search results (empty/end) | Native | Low-frequency |
-
-## Rules
-
-- **No interstitial on launch or navigation** (high annoyance, hurts retention)
-- Ads must be clearly labeled; nothing that impersonates organic content
-- Respect content policy — do not place ads near misleading "official" claims
-- Ad labels/unit IDs controlled via config, not hard-coded per environment
-
-## Implementation
-
-- Use the AdMob SDK through the app's official plugin/package
-- Initialize once at app start; load ads lazily to keep first paint fast
-- Handle failures silently (no blank space); never block content on ad load
-- Test with test unit IDs in dev/staging; real IDs only in release builds
-
-## Metrics
-
-- Fill rate, eCPM, block rate, and ad-related latency
-- Review placement performance; remove underperforming/annoying placements
-
-## Compliance
-
-- Clear privacy policy (see `10_SECURITY.md`) covering ad SDKs
-- Comply with Google Play policy on ads and data collection
+## Related
+- `18_ADMOB_SPEC.md` (authoritative) · `10_SECURITY.md` (privacy)

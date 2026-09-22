@@ -1,40 +1,25 @@
-# Security
+# 10_SECURITY.md — Security Requirements
 
-## Secrets
+**Authoritative specification:** `security_handling.md`
 
-- No secrets in code, config files, or the repo
-- Store in a secrets manager; inject via environment variables
-- Rotation on a schedule and immediately on suspected leak (see `runbooks/credential-reevocation-or-leak.md`)
+This slot is reserved in the numbered documentation series (per the project file map: `10_SECURITY.md` = Security requirements). The complete SafeRoute AI security specification lives in **`brain/security_handling.md`** and is authoritative.
 
-## API
+## Summary of requirements
 
-- Ingest/admin endpoints protected by API key (Bearer)
-- Validate and sanitize all inputs; never trust client data
-- Rate limiting on all endpoints
+- Secrets never in code, git, frontend bundles, logs, or error responses; `.env` gitignored; `.env.example` placeholders only; secrets manager in deploy (`MASTER_RULES.md` §21).
+- Input validation (typed schemas, coordinate/enum ranges), rate limiting, CORS policy, secure headers (CSP/HSTS), injection protection.
+- Provider/LLM/uploaded data treated as untrusted; schema-validated at boundaries.
+- LLM output is untrusted text — grounded, validated, never rendered as unsafe HTML, never authoritative.
+- Model artifacts versioned + checksummed; detections traceable to `model_version` (integrity).
+- Least privilege, defense in depth, zero trust between services; internal ML/admin endpoints never public.
+- Structured logging with never-log list; monitoring + alerting; incident procedures in `runbooks/`.
+- Dependency/SCA scanning in CI; lockfiles; minimal dependencies.
+- AI coding agents follow §20 of `security_handling.md`.
 
-## Data
+## Related
 
-- All data is public; no user PII stored in v1 (no accounts)
-- Push subscription tokens are the only user data; treat as sensitive, encrypt at rest
-
-## Transport
-
-- HTTPS everywhere; HSTS enabled
-- No insecure downgrade paths
-
-## Mobile App
-
-- HTTPS-only network calls (ATS + Android network security config)
-- Bookmarks stored locally; no sensitive data in transit
-- Keep dependencies updated; scan for known CVEs in CI
-
-## Dependencies
-
-- Lock files committed (e.g. lockfile / package-lock.json / pubspec.lock)
-- CI runs dependency security scan
-- Same-origin/official packages only; pin versions
-
-## Incident Handling
-
-- Follow `runbooks` for credential leaks and migration failures
-- Document every security incident in `16_CHANGELOG.md` / post-mortem
+- `security_handling.md` (authoritative full spec)
+- `09_ERROR_HANDLING.md` (fail-closed + sanitization)
+- `07_API_CONTRACT.md` §8/§13
+- `runbooks/credential-reevocation-or-leak.md`
+- `runbooks/database-migration-failure.md`

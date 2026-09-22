@@ -500,7 +500,7 @@ curl http://localhost:8000/api/routes/route_1/analysis
 
 ## 15. Related Docs
 
-- `00_MASTER_RULES.md` — governing rules
+- `MASTER_RULES.md` — governing rules
 - `04_DATA_MODEL.md` — entity-level schema
 - `07_API_CONTRACT.md` — endpoint-level contract
 - `13_TESTING.md` — test plan
