@@ -26,4 +26,8 @@ ml/dataset/labels/
 .vscode/
 .idea/
 .DS_Store
-Thumbs.dbtsconfig.tsbuildinfo
+Thumbs.db
+
+# Build artifacts
+tsconfig.tsbuildinfo
+*.db

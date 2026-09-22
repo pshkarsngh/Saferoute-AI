@@ -13,23 +13,24 @@ The system MUST NOT be called production-ready until every applicable item below
 
 ---
 
-## Current Build Status (Phase 1 — Foundation, in progress)
+## Current Build Status (Phase 1 — Foundation, COMPLETE)
 
-Recorded from the working tree on 2026-09. This section is updated as phases complete; it is **informational only** — the gates below still drive release.
+Verified: `docker compose up` boots db + backend + frontend; `GET /api/v1/health` returns 200 (backend :8000, frontend :5173, and proxy); 4 backend + 2 frontend tests pass; build + lint clean. Phase 2 (Routing/OSRM) is next (`03_ARCHITECTURE.md` §11).
 
 - [✓] Backend repository layout created (`backend/app`: `config.py`, `db.py`, `main.py`, `models/`, `schemas/`, `api/`)
 - [✓] `from app.main import create_app` imports; `create_app()` boots successfully (verified via `python -c` boot check)
 - [✓] Configuration externalized via pydantic-settings (`.env` overrides; never committed secrets) — `backend/app/config.py`
 - [✓] SQLAlchemy 2.0 ORM models materialized for the core data model (`04_DATA_MODEL.md`): `route_requests`, `routes`, `route_segments`, `road_images`, `hazard_detections`, `hazards`, `facilities`, `route_facilities`, `risk_analysis`, `route_analysis`, `analysis_jobs`, `model_versions`, `dataset_versions`, `llm_requests`, `llm_responses`, `audit_logs`
 - [✓] Pydantic schemas mirror `07_API_CONTRACT.md` (snake_case, strict `extra=forbid`)
-- [✓] `GET /api/v1/health` endpoint present (liveness, no internals leaked)
+- [✓] `GET /api/v1/health` endpoint returns 200 (verified via uvicorn AND docker-compose)
 - [✓] `POST /api/v1/route-requests` returns explicit `503 ROUTING_PROVIDER_ERROR` until a provider is wired — **honest unavailable, never fabricated routes** (`09_ERROR_HANDLING.md` §10.1)
 - [✓] API modularized: `api/router.py` → `api/routes/{health, route_requests}.py`
-- [☐] Routing provider (OSRM) integration + normalization (`03_ARCHITECTURE.md` §11 Phase 2) — **next**
-- [☐] Risk engine, facility engine, LLM service, hazard aggregation wired to routes
-- [☐] Frontend scaffold (Vite + React + TS + react-leaflet)
-- [☐] Docker Compose, `docker-compose.yml`, Alembic migrations, `Dockerfile`s
-- [☐] CI workflow (`12_GITHUB_ACTIONS.md`) + `requirements.txt` lockfile + lint/test gates
+- [✓] Backend tests pass: `pytest` 4 passing incl. lifespan/DB-init regression guard
+- [✓] Frontend scaffold (Vite + React + TS + react-leaflet): renders, `npm run build`, `npm test` 2 passing, `npm run lint` clean
+- [✓] Docker Compose (`backend`, `db`, `frontend`): `docker compose up` works; health 200 via backend, frontend :5173, and frontend→backend proxy — **Phase 1 DoD complete**
+- [✓] `.env.example` committed (placeholders only); `.env` gitignored
+- [✓] CI workflow (`.github/workflows/ci.yml`): backend lint/type/tests, frontend lint/build/test, pip-audit + gitleaks
+- [☐] Alembic migrations scaffold (deferred to Phase 2 — DB init uses `create_all` for dev)
 - [☐] `ml/dataset` scaffold + `data.yaml` (`06_AI_SOURCES.md`)
 
 ---

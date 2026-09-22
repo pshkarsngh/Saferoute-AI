@@ -28,15 +28,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **Runbooks** (`runbooks/`) — `credential-reevocation-or-leak.md`, `database-migration-failure.md` incident procedures.
 - **Project rules** `MASTER_RULES.md` — the master rulebook binding all agents and developers.
 
+### Phase 1 — Foundation (complete)
+
+- Backend scaffold: FastAPI app, externalized config (pydantic-settings), SQLAlchemy 2.0 ORM models (route / vision / facility / analysis / LLM domains), typed Pydantic schemas
+- `GET /api/v1/health` returns 200; `POST /api/v1/route-requests` returns explicit honest `503 ROUTING_PROVIDER_ERROR` until routing provider is wired
+- Backend tests (`pytest`): 4 passing, incl. lifespan/DB-init regression guard; lint/type-check gate ready
+- Frontend scaffold: Vite + React + TypeScript, react-leaflet map, search form, route cards; `npm run build`, `npm test` (2 passing), `npm run lint` clean
+- Docker Compose (`backend`, `PostgreSQL 16`, `frontend` nginx): full stack verified — health 200 via backend, frontend, and frontend→backend proxy (Phase 1 DoD pass)
+- `.env.example` placeholders committed; `.env` gitignored; CI workflow (`.github/workflows/ci.yml`)
+
 ### In progress
 
-- Backend scaffold: FastAPI app, config (pydantic-settings), db engine/session, health endpoints, `.env.example`, docker-compose
-- Routing: OSRM provider adapter, route normalization, dynamic 1–4 candidate routes
+- Phase 2 — Routing: OSRM provider adapter, route normalization, dynamic 1–4 candidate routes; Alembic migration scaffold
 - Risk engine: deterministic score, configurable weights, documented formula (not yet finalized) `[DECISION REQUIRED]`
 - Facilities: Overpass corridor search, category aggregation, zero-vs-unavailable handling
 - LLM: grounded explanation layer with deterministic fallback when key absent
-- Frontend scaffold: React + Vite + TypeScript, map, typed API client, route cards
-- Testing infrastructure: backend pytest + ruff + mypy, frontend Vitest + ESLint
 
 ### Planned
 

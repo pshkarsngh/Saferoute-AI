@@ -41,3 +41,11 @@ def test_openapi_schema_exports_health() -> None:
     client = TestClient(app)
     schema = client.get("/api/v1/openapi.json").json()
     assert "/api/v1/health" in schema["paths"]
+
+
+def test_lifespan_initializes_database() -> None:
+    """Boot the app through its lifespan (as uvicorn does) — exercises init_db
+    and every ORM model registration. Guards reserved-name / schema regressions."""
+    app = create_app()
+    with TestClient(app) as client:
+        assert client.get("/api/v1/health").status_code == 200

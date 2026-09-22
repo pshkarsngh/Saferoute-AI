@@ -1,0 +1,55 @@
+# SafeRoute AI — Docker Compose (Phase 1)
+# Services: backend (FastAPI), db (PostgreSQL 16), frontend (nginx static).
+# Rules (15_DEPLOYMENT.md): no secrets baked; .env supplies values; non-root images.
+name: saferoute-ai
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-saferoute}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saferoute}
+      POSTGRES_DB: ${POSTGRES_DB:-saferoute}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-saferoute} -d ${POSTGRES_DB:-saferoute}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      # Exposed only for local dev convenience; remove for production.
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-saferoute}:${POSTGRES_PASSWORD:-saferoute}@db:5432/${POSTGRES_DB:-saferoute}
+      ROUTING_PROVIDER: ${ROUTING_PROVIDER:-osrm}
+      ROUTING_BASE_URL: ${ROUTING_BASE_URL:-https://router.project-osrm.org}
+      FACILITY_PROVIDER: ${FACILITY_PROVIDER:-overpass}
+      OVERPASS_BASE_URL: ${OVERPASS_BASE_URL:-https://overpass-api.de/api/interpreter}
+      MODEL_PATH: ${MODEL_PATH:-}
+      MODEL_VERSION: ${MODEL_VERSION:-0.0.0}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  db_data:

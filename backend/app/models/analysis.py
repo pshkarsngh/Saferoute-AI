@@ -155,5 +155,6 @@ class AuditLog(Base):
     )
     entity_type: Mapped[str] = mapped_column(String(64))
     entity_id: Mapped[str] = mapped_column(Text)
-    metadata: Mapped[dict | None] = mapped_column(JSON_TYPE, nullable=True)
+    # `metadata` is reserved by SQLAlchemy Declarative; attribute is `event_metadata`.
+    event_metadata: Mapped[dict | None] = mapped_column("metadata", JSON_TYPE, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

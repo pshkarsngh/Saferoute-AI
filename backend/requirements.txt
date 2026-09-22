@@ -5,11 +5,11 @@ pydantic==2.10.4
 pydantic-settings==2.7.1
 sqlalchemy==2.0.36
 httpx==0.28.1
+psycopg[binary]==3.2.3          # PostgreSQL driver (15_DEPLOYMENT.md / docker-compose)
 
 # Optional heavy stacks (lazily imported; gracefully unavailable when missing):
 # opencv-python-headless==4.10.0.84   # OpenCV preprocessing (09_ML_SPEC.md)
 # ultralytics==8.3.45                 # YOLO11 inference (09_ML_SPEC.md)
-# psycopg2-binary==2.9.10             # PostgreSQL driver (15_DEPLOYMENT.md)
 
 # Dev/test
 pytest==8.3.4
